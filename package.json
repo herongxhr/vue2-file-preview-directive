@@ -1,0 +1,15 @@
+{
+  "name": "vue2-file-preview-directive",
+  "version": "1.0.0",
+  "description": "vue2，图片、音频、视频、pdf、word、excel、ppt等文件格式前端预览",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "herong",
+  "license": "MIT",
+  "peerDependencies": {
+    "vue": "~2.6.0"
+  }
+}
