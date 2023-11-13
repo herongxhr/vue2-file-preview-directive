@@ -6,5 +6,3 @@ export default {
     Vue.directive("preview", previewDirective(options));
   },
 };
-
-console.log("first");

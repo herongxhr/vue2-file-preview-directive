@@ -23,11 +23,11 @@ export default {
       patterns: [
         {
           from: path.resolve(__dirname, "src/pdfjs"),
-          to: path.resolve(__dirname, "dist/pdfjs"),
+          to: path.resolve(__dirname, "pdfjs"),
         },
         {
           from: path.resolve(__dirname, "src/photoSwipe"),
-          to: path.resolve(__dirname, "dist/photoSwipe"),
+          to: path.resolve(__dirname, "photoSwipe"),
         },
       ],
     }),

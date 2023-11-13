@@ -97,7 +97,7 @@ const handleFileItemClick = (file, content, options) => {
       iframe.style.height = "100%";
       content.appendChild(iframe);
     }
-    iframe.src = getIframeHtml(file, options); // 更新iframe的src
+    iframe.src = getIframeSrc(file, options); // 更新iframe的src
   } else {
     // 对于不是图片或PDF的文件，删除iframe
     if (iframe) {
@@ -253,7 +253,7 @@ export default (event, options = {}, fileList) => {
 
   // 默认展示第一个文件
   if (fileList.length > 0) {
-    iframeElement.setAttribute("src", getIframeHtml(fileList[0], options));
+    iframeElement.setAttribute("src", getIframeSrc(fileList[0], options));
   }
 
   content.appendChild(iframeElement);
@@ -262,31 +262,16 @@ export default (event, options = {}, fileList) => {
   document.body.appendChild(dialog);
 };
 
-/**
- * 根据文件信息生成用于显示图片或PDF的iframe HTML。
- *
- * @param {Object} fileInfo - 包含文件路径和类型的信息对象。
- * @param {Object} options - 可选参数，提供图片和PDF查看器模板的URL或返回URL的函数。
- * @returns {string} iframe的URL。
- */
-export function getIframeHtml(fileInfo, options = {}) {
+export function getIframeSrc(fileInfo) {
+  const pdfViewerTemplateUrl = `node_modules/vue2-file-preview-directive/dist/photoSwipe/photoswipe.html?url=`;
+  const imgViewerTemplateUrl = `node_modules/vue2-file-preview-directive/dist/pdfjs/web/viewer.html?file=`;
+
   // 检查fileInfo是否有效
   if (!fileInfo || !fileInfo.filePath) {
     throw new Error("无效的fileInfo参数");
   }
 
-  const { imgViewerTemplateUrl = "", pdfViewerTemplateUrl = "" } = options;
-  debugger;
-  const resolvedImgViewerUrl =
-    typeof imgViewerTemplateUrl === "function"
-      ? imgViewerTemplateUrl()
-      : imgViewerTemplateUrl;
-  const resolvedPdfViewerUrl =
-    typeof pdfViewerTemplateUrl === "function"
-      ? pdfViewerTemplateUrl()
-      : pdfViewerTemplateUrl;
-
   return fileInfo.isImg
-    ? resolvedImgViewerUrl + fileInfo.filePath
-    : `../pdfjs/web/viewer.html?file=${fileInfo.filePath}`;
+    ? imgViewerTemplateUrl + fileInfo.filePath
+    : `${pdfViewerTemplateUrl}${fileInfo.filePath}`;
 }

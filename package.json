@@ -13,6 +13,11 @@
   "peerDependencies": {
     "vue": "~2.6.0"
   },
+  "files": [
+    "dist/",
+    "pdfjs/",
+    "photoSwipe/"
+  ],
   "devDependencies": {
     "copy-webpack-plugin": "^11.0.0",
     "webpack": "^5.89.0",
