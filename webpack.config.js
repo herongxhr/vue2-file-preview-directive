@@ -1,20 +1,21 @@
-const CopyPlugin = require("copy-webpack-plugin");
-const path = require("path");
+import { fileURLToPath } from "url";
+import path from "path";
+import CopyPlugin from "copy-webpack-plugin";
 
-module.exports = {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export default {
   // 模式: 'development' 或 'production'
-  mode: "product",
-  entry: "./src/index.js",
-
-  output: {
-    filename: "bundle.js",
-    path: path.resolve(__dirname, "dist"),
-  },
+  mode: "development",
+  entry: path.resolve(__dirname, "src/index.js"),
 
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src/"),
     },
+    extensions: [".js", ".ts", ".json"],
+    mainFiles: ["index"],
   },
 
   plugins: [

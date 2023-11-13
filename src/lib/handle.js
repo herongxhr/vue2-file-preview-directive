@@ -1,4 +1,3 @@
-import path from "path";
 const iframeId = "file-preview-iframe";
 
 const dialogStyles = {
