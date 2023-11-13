@@ -1,3 +1,4 @@
+import path from "path";
 const iframeId = "file-preview-iframe";
 
 const dialogStyles = {
@@ -288,5 +289,5 @@ export function getIframeHtml(fileInfo, options = {}) {
 
   return fileInfo.isImg
     ? resolvedImgViewerUrl + fileInfo.filePath
-    : resolvedPdfViewerUrl + fileInfo.filePath;
+    : `../pdfjs/web/viewer.html?file=${fileInfo.filePath}`;
 }
