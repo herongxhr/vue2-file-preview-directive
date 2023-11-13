@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>查看图片</title>
+  <style>
+    html,
+    body {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    #photo-swipe-container {
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <script src="./photoswipe.umd.min.js"></script>
+  <link rel="stylesheet" href="./photoswipe.css" />
+  <div id="pswp"></div>
+  </div>
+
+  <script type="text/javascript">
+    function getImageSize(url, callback) {
+      let img = new Image();
+      img.src = url;
+
+      img.onload = function () {
+        callback({ width: this.width, height: this.height });
+      };
+
+      img.onerror = function () {
+        console.error("加载图片出错：", url);
+      };
+    }
+
+    const dataSource = [];
+    let imageUrls = document.location.search.slice(5).split(',');
+
+    function loadImageSizes(urls, callback) {
+      let imagesLoaded = 0;
+      let totalImages = urls.length;
+
+      urls.forEach((url) => {
+        getImageSize(url, (size) => {
+          dataSource.push({
+            src: url,
+            width: size.width,
+            height: size.height
+          });
+
+          imagesLoaded++;
+
+          if (imagesLoaded === totalImages) {
+            callback(dataSource);
+          }
+        });
+      });
+    }
+
+    loadImageSizes(imageUrls, (data) => {
+      // Initialize PhotoSwipe with the prepared dataSource
+      let pswpElement = document.querySelector('#pswp');
+      let options = {
+        index: 0,
+        close:false,
+        dataSource: data,
+        showHideAnimationType: 'none',
+      };
+      let gallery = new PhotoSwipe(options);
+      gallery.init();
+    });
+    // const galleryContainerEl = document.getElementById('photo-swipe-container')
+    // let urls = document.location.search.slice(5).split(',');
+    // urls.forEach((url) => {
+    //   dataSource.push({
+    //     src: url,
+    //     width: 1280,
+    //     height: 800,
+    //     alt: ''
+    //   })
+    //   const aEl = document.createElement('a');
+    //   aEl.href = url;
+    //   const imgEl = document.createElement('img');
+    //   imgEl.src = url;
+    //   imgEl.style.width = '100px';
+    //   imgEl.style.height = '100px';
+    //   aEl.appendChild(imgEl)
+    //   galleryContainerEl.appendChild(aEl)
+    // });
+
+    // console.log(urls);
+    // var lightbox = new PhotoSwipeLightbox({
+    //   // dataSource,
+    //   // arrowPrevSVG: leftArrowSVGString,
+    //   // arrowNextSVG: leftArrowSVGString,
+    //   arrowKeys: true,
+    //   bgOpacity: 0.8,
+    //   gallery: '#photo-swipe-container',
+    //   children: 'a',
+    //   // dynamic import is not supported in UMD version
+    //   pswpModule: PhotoSwipe,
+    // });
+    // lightbox.on('contentLoad', (e) => {
+
+    // })
+    // lightbox.init();
+  </script>
+</body>
+
+</html>
