@@ -4,7 +4,6 @@ import handlePreview from "./handle.js";
 // lib/index.js
 export default function previewDirective(options) {
   return (el, { value }) => {
-    debugger;
     if (el.hasInit) return;
     if (!value) {
       console.log(`v-preview指令必须传入文件数据！`);

@@ -26,8 +26,8 @@ export default {
           to: path.resolve(__dirname, "pdfjs"),
         },
         {
-          from: path.resolve(__dirname, "src/photoSwipe"),
-          to: path.resolve(__dirname, "photoSwipe"),
+          from: path.resolve(__dirname, "src/photoswipe"),
+          to: path.resolve(__dirname, "photoswipe"),
         },
       ],
     }),

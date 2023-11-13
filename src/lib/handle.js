@@ -26,13 +26,13 @@ const headerStyles = {
 
 // 标题样式
 const titleStyles = {
-  fontSize: "1.5rem",
+  fontSize: "24px",
   color: "white",
 };
 
 // 关闭按钮样式
 const closeButtonStyles = {
-  fontSize: "2rem",
+  fontSize: "24px",
   color: "white",
   cursor: "pointer",
 };
@@ -190,7 +190,6 @@ const buildFileListItem = (file, options) => {
 };
 
 export default (event, options = {}, fileList) => {
-  debugger;
   if (event) {
     event.preventDefault();
   }
@@ -220,7 +219,7 @@ export default (event, options = {}, fileList) => {
   const closeButton = createElementWithStyles(
     "span",
     ["preview-close-btn"],
-    "&times;",
+    "关闭",
     closeButtonStyles
   );
 
@@ -256,22 +255,26 @@ export default (event, options = {}, fileList) => {
     iframeElement.setAttribute("src", getIframeSrc(fileList[0], options));
   }
 
-  content.appendChild(iframeElement);
+  header.appendChild(title);
+  header.appendChild(closeButton);
   dialog.appendChild(header);
+  content.appendChild(iframeElement);
   dialog.appendChild(content);
   document.body.appendChild(dialog);
 };
 
-export function getIframeSrc(fileInfo) {
-  const pdfViewerTemplateUrl = `node_modules/vue2-file-preview-directive/dist/photoSwipe/photoswipe.html?url=`;
-  const imgViewerTemplateUrl = `node_modules/vue2-file-preview-directive/dist/pdfjs/web/viewer.html?file=`;
-
+export function getIframeSrc(fileInfo = {}, options) {
+  const { filePath } = fileInfo;
   // 检查fileInfo是否有效
-  if (!fileInfo || !fileInfo.filePath) {
+  if (!filePath) {
     throw new Error("无效的fileInfo参数");
   }
 
+  const { publicPath = "" } = options;
+  const pdfViewerTemplateUrl = `${publicPath}/pdfjs/web/viewer.html?file=`;
+  const imgViewerTemplateUrl = `${publicPath}/photoswipe/photoswipe.html?file=`;
+
   return fileInfo.isImg
-    ? imgViewerTemplateUrl + fileInfo.filePath
-    : `${pdfViewerTemplateUrl}${fileInfo.filePath}`;
+    ? `${imgViewerTemplateUrl}${filePath}`
+    : `${pdfViewerTemplateUrl}${filePath}`;
 }
