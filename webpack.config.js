@@ -18,6 +18,12 @@ export default {
     mainFiles: ["index"],
   },
 
+  output: {
+    library: "vue2-file-preview-directive",
+    libraryTarget: "umd",
+    umdNamedDefine: true,
+  },
+
   plugins: [
     new CopyPlugin({
       patterns: [

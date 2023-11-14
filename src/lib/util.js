@@ -44,7 +44,8 @@ export const isOfficeType = (ext) => {
   return isWordType(ext) || isExcelType(ext) || isPPTType(ext);
 };
 
-export const isPdfType = (ext) => ext && pdfExtend.some((i) => i.includes(ext));
+export const isPdfType = (ext) =>
+  ext && pdfExtend.some((i) => i.includes(ext.toLowerCase()));
 
 export const initFileWithFullPath = (file, options) => {
   const { getNginxProxyFileUrl, getFileStreamUrl } = options;

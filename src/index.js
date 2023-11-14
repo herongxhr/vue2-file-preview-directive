@@ -1,5 +1,6 @@
-import previewDirective from "./lib/index.js";
-export { default as handlePreview } from "./lib/handle.js";
+import previewDirective from "@/lib/index.js";
+export { default as handlePreview } from "@/lib/handle.js";
+export { initFileWithFullPath } from "@/lib/util.js";
 
 export default {
   install(Vue, options) {

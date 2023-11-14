@@ -1,5 +1,5 @@
-import { addEventListener, initFileWithFullPath } from "./util.js";
-import handlePreview from "./handle.js";
+import { addEventListener, initFileWithFullPath } from "@/lib/util.js";
+import handlePreview from "@/lib/handle.js";
 
 // lib/index.js
 export default function previewDirective(options) {

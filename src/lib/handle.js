@@ -1,4 +1,7 @@
-const iframeId = "file-preview-iframe";
+const iframeId = "vue2-file-preview-directive-iframe";
+const mediaId = "vue2-file-preview-directive-media";
+const previewContainerId = "vue2-file-preview-container";
+const primaryColor = "#736cdf";
 
 const dialogStyles = {
   position: "fixed",
@@ -17,7 +20,7 @@ const headerStyles = {
   height: "50px",
   lineHeight: "50px",
   padding: "0 1rem",
-  backgroundColor: "#736cdf",
+  backgroundColor: primaryColor,
   flex: "none",
   display: "flex",
   justifyContent: "space-between",
@@ -46,7 +49,40 @@ const contentStyles = {
   width: "100%",
   height: "100%",
   display: "flex",
+  alignItems: "stretch",
+};
+
+const fileListViewStyles = {
+  width: "300px",
+  display: "flex",
   flexFlow: "column nowrap",
+  padding: "8px",
+  background: "#eee",
+};
+
+const listItemStyles = {
+  display: "flex",
+  alignItems: "center",
+  cursor: "pointer",
+  padding: "16px",
+  background: "#fff",
+  color: "#736cdf",
+  borderBottom: "1px solid #ccc",
+};
+
+const previewContainerStyles = {
+  flex: "1",
+  height: "100%",
+  position: "relative", // 相对定位，为了媒体元素的绝对定位
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+};
+
+/* 在您的样式表中添加 */
+const selectedFileItemStyles = {
+  backgroundColor: primaryColor,
+  color: "#fff",
 };
 
 const createElementWithStyles = (
@@ -62,16 +98,7 @@ const createElementWithStyles = (
   return element;
 };
 
-const createFileList = (fileList, options) => {
-  let fileListViewStyles = {
-    flex: "none",
-    display: "flex",
-    flexFlow: "row nowrap",
-    padding: "1rem",
-    borderBottom: "1px solid #736cdf",
-    overflowX: "auto",
-  };
-
+const createFileList = (fileList, options, content) => {
   let fileListView = createElementWithStyles(
     "div",
     ["preview-dialog-file-list"],
@@ -80,66 +107,120 @@ const createFileList = (fileList, options) => {
   );
 
   fileList.forEach((file) => {
-    fileListView.appendChild(buildFileListItem(file, options));
+    fileListView.appendChild(buildFileListItem(file, options, content));
   });
 
   return fileListView;
 };
 
-const handleFileItemClick = (file, content, options) => {
-  let iframe = content.querySelector(`#${iframeId}`);
+const clearFileSelection = (fileListView) => {
+  const fileItems = fileListView.querySelectorAll(
+    ".preview-dialog-file-list-item"
+  );
+  fileItems.forEach((item) => {
+    item.style.color = primaryColor;
+    item.style.backgroundColor = "#fff";
+  });
+};
 
+const handleFileItemClick = (file, content, options, hasList = false) => {
+  let previewContainer = content.querySelector(`#${previewContainerId}`);
+
+  // 如果 previewContainer 不存在，创建它
+  if (!previewContainer) {
+    previewContainer = createElementWithStyles(
+      "div",
+      ["preview-container"],
+      "",
+      hasList ? previewContainerStyles : {} // 根据是否有列表调整样式
+    );
+    previewContainer.id = previewContainerId;
+    content.appendChild(previewContainer);
+  }
+
+  // 移除之前所有项的选中效果，并为当前点击的项添加选中效果
+  if (hasList) {
+    const fileListView = content.querySelector(".preview-dialog-file-list");
+    clearFileSelection(fileListView);
+    const currentFileItem = fileListView.querySelector(
+      `[data-file-id="${file.id}"]`
+    );
+    if (currentFileItem) {
+      Object.assign(
+        currentFileItem.style,
+        listItemStyles,
+        selectedFileItemStyles
+      );
+    }
+  }
+
+  // 清除现有的 iframe 和 mediaElement
+  const existingIframe = previewContainer.querySelector(`#${iframeId}`);
+  if (existingIframe) {
+    previewContainer.removeChild(existingIframe);
+  }
+  const existingMediaElement = previewContainer.querySelector(`#${mediaId}`);
+  if (existingMediaElement) {
+    previewContainer.removeChild(existingMediaElement);
+  }
+
+  // 创建 iframe 或 mediaElement
+  let iframe = createElementWithStyles("iframe", ["preview-iframe"], "", {
+    width: "100%",
+    height: "100%", // 默认显示
+    display: "none", // 默认不显示
+  });
+  iframe.id = iframeId;
+  previewContainer.appendChild(iframe); // 添加 iframe 到 previewContainer
+
+  let mediaElement = createElementWithStyles(
+    file.isAudio ? "audio" : "video",
+    ["preview-media"],
+    "",
+    {
+      width: "100%",
+      height: "100%", // 默认显示
+      display: "none", // 默认不显示
+    }
+  );
+  mediaElement.id = mediaId;
+  previewContainer.appendChild(mediaElement); // 添加 mediaElement 到 previewContainer
+
+  // 确保 iframe 和 mediaElement 不同时显示
+  iframe.style.display = "none";
+  mediaElement.style.display = "none";
+
+  // 根据文件类型更新元素属性和样式
   if (file.isImg || file.isPdf) {
-    if (!iframe) {
-      iframe = document.createElement("iframe");
-      iframe.id = iframeId;
-      iframe.style.width = "100%";
-      iframe.style.height = "100%";
-      content.appendChild(iframe);
-    }
-    iframe.src = getIframeSrc(file, options); // 更新iframe的src
-  } else {
-    // 对于不是图片或PDF的文件，删除iframe
-    if (iframe) {
-      content.removeChild(iframe);
-    }
+    iframe.src = getIframeSrc(file, options);
+    iframe.style.display = "block";
+  } else if (file.isAudio || file.isVideo) {
+    mediaElement.src = file.filePath;
+    mediaElement.controls = true;
+    mediaElement.style.position = "absolute";
+    mediaElement.style.display = "block";
+    mediaElement.style.height = file.isVideo ? "100%" : "60px"; // 视频填充高度，音频则固定高度
+  }
 
-    // 针对其他文件类型的处理逻辑
-    if (file.isOffice) {
-      // Office文件处理逻辑
-      POBrowser.openWindow(
-        "/pageOffice",
-        "width=1150px;height=900px;",
-        file.filePath
-      );
-    } else if (file.isAudio || file.isVideo) {
-      // 音频和视频的处理逻辑
-      let mediaElement = document.createElement(
-        file.isAudio ? "audio" : "video"
-      );
-      mediaElement.src = file.filePath;
-      mediaElement.controls = true;
-      mediaElement.style.width = "100%";
-      content.appendChild(mediaElement);
-    }
+  // 处理 Office 文件的逻辑...
+  if (file.isOffice) {
+    POBrowser.openWindow(
+      "/pageOffice",
+      "width=1150px;height=900px;",
+      file.filePath
+    );
   }
 };
 
 // 根据文件类型构建文件列表项
-const buildFileListItem = (file, options) => {
-  let listItemStyles = {
-    display: "flex",
-    alignItems: "center",
-    cursor: "pointer",
-    margin: "0.5rem 0",
-  };
-
+const buildFileListItem = (file, options, content) => {
   let fileListItem = createElementWithStyles(
     "div",
     ["preview-dialog-file-list-item"],
     "",
     listItemStyles
   );
+  fileListItem.setAttribute("data-file-id", file.id);
 
   let fileNameSpan = createElementWithStyles(
     "span",
@@ -183,7 +264,7 @@ const buildFileListItem = (file, options) => {
   fileListItem.appendChild(thumbnail);
   fileListItem.appendChild(fileNameSpan);
   fileListItem.addEventListener("click", () =>
-    handleFileItemClick(file, content, options)
+    handleFileItemClick(file, content, options, true)
   );
 
   return fileListItem;
@@ -193,7 +274,10 @@ export default (event, options = {}, fileList) => {
   if (event) {
     event.preventDefault();
   }
-
+  if (!fileList.length) {
+    console.log("要预览的文件数据为空");
+    return;
+  }
   // 使用样式创建元素
   const dialog = createElementWithStyles(
     "div",
@@ -237,28 +321,20 @@ export default (event, options = {}, fileList) => {
   };
   closeButton.addEventListener("click", handleClose);
 
-  const frameName = "preview-iframe";
-  const iframeElement = document.createElement("iframe");
-  iframeElement.setAttribute("name", frameName);
-  iframeElement.style.width = "100%";
-  iframeElement.style.height = "100%";
-
   // 判断文件列表长度并相应处理
   let dialogContentFileList = null;
   if (fileList.length > 1) {
-    dialogContentFileList = createFileList(fileList, options);
+    dialogContentFileList = createFileList(fileList, options, content);
     content.appendChild(dialogContentFileList); // 只有多个文件时添加文件列表
-  }
-
-  // 默认展示第一个文件
-  if (fileList.length > 0) {
-    iframeElement.setAttribute("src", getIframeSrc(fileList[0], options));
+  } else if (fileList.length === 1) {
+    // 单个文件情况下的处理
+    // 根据文件类型创建并展示对应的元素
+    handleFileItemClick(fileList[0], content, options);
   }
 
   header.appendChild(title);
   header.appendChild(closeButton);
   dialog.appendChild(header);
-  content.appendChild(iframeElement);
   dialog.appendChild(content);
   document.body.appendChild(dialog);
 };
@@ -272,7 +348,7 @@ export function getIframeSrc(fileInfo = {}, options) {
 
   const { publicPath = "" } = options;
   const pdfViewerTemplateUrl = `${publicPath}/pdfjs/web/viewer.html?file=`;
-  const imgViewerTemplateUrl = `${publicPath}/photoswipe/photoswipe.html?file=`;
+  const imgViewerTemplateUrl = `${publicPath}/photoswipe/photoswipe.html?url=`;
 
   return fileInfo.isImg
     ? `${imgViewerTemplateUrl}${filePath}`
