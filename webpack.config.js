@@ -25,17 +25,17 @@ export default {
   },
 
   plugins: [
-    new CopyPlugin({
-      patterns: [
-        {
-          from: path.resolve(__dirname, "src/pdfjs"),
-          to: path.resolve(__dirname, "pdfjs"),
-        },
-        {
-          from: path.resolve(__dirname, "src/photoswipe"),
-          to: path.resolve(__dirname, "photoswipe"),
-        },
-      ],
-    }),
+    // new CopyPlugin({
+    //   patterns: [
+    //     {
+    //       from: path.resolve(__dirname, "src/pdfjs"),
+    //       to: path.resolve(__dirname, "pdfjs"),
+    //     },
+    //     {
+    //       from: path.resolve(__dirname, "src/photoswipe"),
+    //       to: path.resolve(__dirname, "photoswipe"),
+    //     },
+    //   ],
+    // }),
   ],
 };
