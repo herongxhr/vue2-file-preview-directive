@@ -16,7 +16,7 @@
   "files": [
     "dist/",
     "pdfjs/",
-    "photoSwipe"
+    "photoswipe"
   ],
   "devDependencies": {
     "copy-webpack-plugin": "^11.0.0",

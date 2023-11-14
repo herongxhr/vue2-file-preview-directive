@@ -132,7 +132,11 @@ const handleFileItemClick = (file, content, options, hasList = false) => {
       "div",
       ["preview-container"],
       "",
-      hasList ? previewContainerStyles : {} // 根据是否有列表调整样式
+      hasList
+        ? previewContainerStyles
+        : {
+            flex: "1",
+          } // 根据是否有列表调整样式
     );
     previewContainer.id = previewContainerId;
     content.appendChild(previewContainer);

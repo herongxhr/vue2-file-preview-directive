@@ -28,11 +28,11 @@ export default {
     // new CopyPlugin({
     //   patterns: [
     //     {
-    //       from: path.resolve(__dirname, "src/pdfjs"),
+    //       from: path.resolve(__dirname, "pdfjs"),
     //       to: path.resolve(__dirname, "pdfjs"),
     //     },
     //     {
-    //       from: path.resolve(__dirname, "src/photoswipe"),
+    //       from: path.resolve(__dirname, "photoswipe"),
     //       to: path.resolve(__dirname, "photoswipe"),
     //     },
     //   ],
