@@ -136,6 +136,8 @@ const handleFileItemClick = (file, content, options, hasList = false) => {
         ? previewContainerStyles
         : {
             flex: "1",
+            justifyContent: "center",
+            alignItems: "center",
           } // 根据是否有列表调整样式
     );
     previewContainer.id = previewContainerId;
