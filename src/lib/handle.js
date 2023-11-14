@@ -2,6 +2,7 @@ const iframeId = "vue2-file-preview-directive-iframe";
 const mediaId = "vue2-file-preview-directive-media";
 const previewContainerId = "vue2-file-preview-container";
 const primaryColor = "#736cdf";
+const sideBarWidth = "300px";
 
 const dialogStyles = {
   position: "fixed",
@@ -53,7 +54,7 @@ const contentStyles = {
 };
 
 const fileListViewStyles = {
-  width: "300px",
+  width: sideBarWidth,
   display: "flex",
   flexFlow: "column nowrap",
   padding: "8px",
@@ -68,6 +69,9 @@ const listItemStyles = {
   background: "#fff",
   color: "#736cdf",
   borderBottom: "1px solid #ccc",
+  whiteSpace: "normal", // 允许文本换行
+  overflow: "hidden", // 超出容器隐藏
+  textOverflow: "ellipsis", // 显示省略符号表示文本被截断
 };
 
 const previewContainerStyles = {
@@ -77,6 +81,14 @@ const previewContainerStyles = {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
+};
+
+const fileListItemTitleStyles = {
+  marginLeft: "0.5rem",
+  display: "inline-block",
+  width: `calc(${sideBarWidth} - 60px)`,
+  whiteSpace: "wrap",
+  wordWrap: "break-word",
 };
 
 /* 在您的样式表中添加 */
@@ -232,7 +244,7 @@ const buildFileListItem = (file, options, content) => {
     "span",
     [],
     file.fileName,
-    { marginLeft: "0.5rem" } // 文字距离缩略图的间距
+    fileListItemTitleStyles // 文字距离缩略图的间距
   );
 
   // 创建缩略图或图标

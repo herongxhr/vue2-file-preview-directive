@@ -9,7 +9,28 @@ export default {
   // 模式: 'development' 或 'production'
   mode: "development",
   entry: path.resolve(__dirname, "src/index.js"),
-
+  module: {
+    rules: [
+      {
+        test: /\.m?js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: [
+              [
+                "@babel/preset-env",
+                {
+                  useBuiltIns: "usage",
+                  corejs: { version: 3, proposals: true },
+                },
+              ],
+            ],
+          },
+        },
+      },
+    ],
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src/"),
@@ -23,7 +44,6 @@ export default {
     libraryTarget: "umd",
     umdNamedDefine: true,
   },
-
   plugins: [
     // new CopyPlugin({
     //   patterns: [
