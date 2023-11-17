@@ -344,6 +344,8 @@ export default (event, options = {}, fileList) => {
   if (fileList.length > 1) {
     dialogContentFileList = createFileList(fileList, options, content);
     content.appendChild(dialogContentFileList); // 只有多个文件时添加文件列表
+    // 默认展示第一个文件
+    handleFileItemClick(fileList[0], content, options, true);
   } else if (fileList.length === 1) {
     // 单个文件情况下的处理
     // 根据文件类型创建并展示对应的元素

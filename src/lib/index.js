@@ -1,6 +1,12 @@
 import { addEventListener, initFileWithFullPath } from "@/lib/util.js";
 import handlePreview from "@/lib/handle.js";
 
+// 生成一个基于时间戳和随机数的唯一ID
+function generateUniqueId() {
+  const timestamp = new Date().getTime();
+  const randomPart = Math.floor(Math.random() * 1000000);
+  return `file-${timestamp}-${randomPart}`;
+}
 // lib/index.js
 export default function previewDirective(options) {
   return (el, { value }) => {
@@ -26,7 +32,9 @@ export default function previewDirective(options) {
         filePath = fileInfo;
         fileName = filePath.split("/").pop();
         fileType = fileName.split(".").pop();
-        fileInfo = { filePath, fileName, fileType };
+        // 为每个文件添加一个唯一ID
+        const uniqueId = generateUniqueId();
+        fileInfo = { filePath, fileName, fileType, id: uniqueId };
       }
       fileInfo = initFileWithFullPath(fileInfo, options);
       return fileInfo;
