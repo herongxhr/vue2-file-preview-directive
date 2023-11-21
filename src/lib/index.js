@@ -1,38 +1,20 @@
 import { addEventListener, initFileWithFullPath } from "@/lib/util.js";
 import handlePreview from "@/lib/handle.js";
 
-// 生成一个基于时间戳和随机数的唯一ID
 function generateUniqueId() {
   const timestamp = new Date().getTime();
   const randomPart = Math.floor(Math.random() * 1000000);
   return `file-${timestamp}-${randomPart}`;
 }
-// lib/index.js
-export default function previewDirective(options) {
-  return (el, { value }) => {
-    if (el.hasInit) return;
-    if (!value) {
-      console.log(`v-preview指令必须传入文件数据！`);
-      return;
-    }
-    // value值是响应式的
-    let sourceFileList = [];
-    if (Array.isArray(value)) {
-      sourceFileList = value;
-    } else if (typeof value === "string") {
-      // 如果value是逗号分隔的字符串，则分隔成数组
-      sourceFileList = value.split(",").filter(Boolean);
-    } else {
-      sourceFileList = [value];
-    }
 
-    sourceFileList = sourceFileList.map((fileInfo) => {
+export default function previewDirective(options) {
+  const updateFileList = (el, fileList, options) => {
+    let sourceFileList = fileList.map((fileInfo) => {
       let filePath, fileName, fileType;
       if (typeof fileInfo === "string") {
         filePath = fileInfo;
         fileName = filePath.split("/").pop();
         fileType = fileName.split(".").pop();
-        // 为每个文件添加一个唯一ID
         const uniqueId = generateUniqueId();
         fileInfo = { filePath, fileName, fileType, id: uniqueId };
       }
@@ -40,8 +22,40 @@ export default function previewDirective(options) {
       return fileInfo;
     });
 
-    addEventListener(el, "click", handlePreview, options, sourceFileList);
-    // 只处理一次
-    el.hasInit = true;
+    // 移除旧的事件监听器
+    if (el._handlePreviewListener) {
+      el.removeEventListener("click", el._handlePreviewListener);
+    }
+
+    // 添加新的事件监听器
+    el._handlePreviewListener = (event) =>
+      handlePreview(event, options, sourceFileList);
+    addEventListener(el, "click", el._handlePreviewListener);
+  };
+
+  return {
+    bind(el, { value }, vnode) {
+      if (!value) {
+        console.warn(`v-preview指令必须传入文件数据！`);
+        return;
+      }
+      if (Array.isArray(value) || typeof value === "string") {
+        updateFileList(el, value, options);
+      }
+    },
+    update(el, { value }, vnode) {
+      if (!value) {
+        console.warn(`v-preview指令必须传入文件数据！`);
+        return;
+      }
+      if (Array.isArray(value) || typeof value === "string") {
+        updateFileList(el, value, options);
+      }
+    },
+    unbind(el) {
+      if (el._handlePreviewListener) {
+        el.removeEventListener("click", el._handlePreviewListener);
+      }
+    },
   };
 }
