@@ -8,8 +8,18 @@ function generateUniqueId() {
 }
 
 export default function previewDirective(options) {
-  const updateFileList = (el, fileList, options) => {
-    let sourceFileList = fileList.map((fileInfo) => {
+  const updateFileList = (el, value, options) => {
+    // value值是响应式的
+    let sourceFileList = [];
+    if (Array.isArray(value)) {
+      sourceFileList = value;
+    } else if (typeof value === "string") {
+      // 如果value是逗号分隔的字符串，则分隔成数组
+      sourceFileList = value.split(",").filter(Boolean);
+    } else {
+      sourceFileList = [value];
+    }
+    sourceFileList = sourceFileList.map((fileInfo) => {
       let filePath, fileName, fileType;
       if (typeof fileInfo === "string") {
         filePath = fileInfo;
@@ -23,14 +33,17 @@ export default function previewDirective(options) {
     });
 
     // 移除旧的事件监听器
-    if (el._handlePreviewListener) {
-      el.removeEventListener("click", el._handlePreviewListener);
+    if (el._handlePreviewListenerRef) {
+      el.removeEventListener("click", el._handlePreviewListenerRef);
     }
 
-    // 添加新的事件监听器
-    el._handlePreviewListener = (event) =>
+    // 定义事件处理器
+    const handlePreviewEvent = (event) =>
       handlePreview(event, options, sourceFileList);
-    addEventListener(el, "click", el._handlePreviewListener);
+
+    // 添加新的事件监听器
+    el.addEventListener("click", handlePreviewEvent);
+    el._handlePreviewListenerRef = handlePreviewEvent;
   };
 
   return {
@@ -39,22 +52,22 @@ export default function previewDirective(options) {
         console.warn(`v-preview指令必须传入文件数据！`);
         return;
       }
-      if (Array.isArray(value) || typeof value === "string") {
-        updateFileList(el, value, options);
-      }
+      updateFileList(el, value, options);
     },
     update(el, { value }, vnode) {
       if (!value) {
         console.warn(`v-preview指令必须传入文件数据！`);
         return;
       }
-      if (Array.isArray(value) || typeof value === "string") {
+      // 检查 value 是否发生了变化
+      if (el._prevValue !== JSON.stringify(value)) {
         updateFileList(el, value, options);
+        el._prevValue = JSON.stringify(value); // 存储当前 value 的字符串表示
       }
     },
     unbind(el) {
-      if (el._handlePreviewListener) {
-        el.removeEventListener("click", el._handlePreviewListener);
+      if (el._handlePreviewListenerRef) {
+        el.removeEventListener("click", el._handlePreviewListenerRef);
       }
     },
   };
