@@ -135,7 +135,13 @@ const clearFileSelection = (fileListView) => {
   });
 };
 
-const handleFileItemClick = (file, content, options, hasList = false) => {
+const handleFileItemClick = (
+  file,
+  content,
+  options,
+  hasList = false,
+  closePreviewHandle
+) => {
   let previewContainer = content.querySelector(`#${previewContainerId}`);
 
   // 如果 previewContainer 不存在，创建它
@@ -222,6 +228,8 @@ const handleFileItemClick = (file, content, options, hasList = false) => {
 
   // 处理 Office 文件的逻辑...
   if (file.isOffice) {
+    // 关闭弹窗
+    closePreviewHandle();
     POBrowser.openWindow(
       "/pageOffice",
       "width=1150px;height=900px;",
@@ -345,11 +353,11 @@ export default (event, options = {}, fileList) => {
     dialogContentFileList = createFileList(fileList, options, content);
     content.appendChild(dialogContentFileList); // 只有多个文件时添加文件列表
     // 默认展示第一个文件
-    handleFileItemClick(fileList[0], content, options, true);
+    handleFileItemClick(fileList[0], content, options, true, handleClose);
   } else if (fileList.length === 1) {
     // 单个文件情况下的处理
     // 根据文件类型创建并展示对应的元素
-    handleFileItemClick(fileList[0], content, options);
+    handleFileItemClick(fileList[0], content, options, false, handleClose);
   }
 
   header.appendChild(title);
