@@ -135,7 +135,7 @@ const clearFileSelection = (fileListView) => {
   });
 };
 
-const handleFileItemClick = (
+const handleFileItemClick = async (
   file,
   content,
   options,
@@ -160,6 +160,16 @@ const handleFileItemClick = (
     );
     previewContainer.id = previewContainerId;
     content.appendChild(previewContainer);
+  }
+
+  if (options.beforePreview && typeof options.beforePreview === "function") {
+    try {
+      await options.beforePreview(file);
+    } catch (error) {
+      console.error("执行beforePreview出错：", error);
+      // 可选：处理错误，例如关闭弹窗或显示错误消息
+      return;
+    }
   }
 
   // 移除之前所有项的选中效果，并为当前点击的项添加选中效果

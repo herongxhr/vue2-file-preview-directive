@@ -1,20 +1,16 @@
-当然可以，这是根据我们讨论更新后的 Markdown 文档的中文版本：
-
-````markdown
 # Vue2 文件预览指令
 
 ## 描述
 
-`vue2-file-preview-directive` 是一个 Vue2 指令，可以预览包括图片、音频、视频、PDF、Word、Excel 和 PowerPoint 等多种文件格式。
+`vue2-file-preview-directive` 是一个用于 Vue2 的指令，用于预览多种文件格式，包括图片、音频、视频、PDF、Word、Excel 和 PowerPoint 文件。此指令支持在预览文件之前执行自定义的同步或异步操作，例如请求验证或记录日志。
 
 ## 安装
 
-您可以使用以下 npm 命令来安装这个指令：
+使用以下 npm 命令来安装这个指令：
 
 ```bash
 npm install vue2-file-preview-directive
 ```
-````
 
 ## 使用方法
 
@@ -31,16 +27,21 @@ npm install vue2-file-preview-directive
 
    ```vue
    <template>
-     <div v-file-preview="fileList"></div>
+     <div v-file-preview="fileListOptions"></div>
    </template>
 
    <script>
    export default {
      data() {
        return {
-         fileList: [
-           /* 文件对象数组 */
-         ],
+         fileListOptions: {
+           fileList: [
+             /* 文件对象数组 */
+           ],
+           beforePreviewRequest: async (file) => {
+             // 可选: 在预览文件之前执行的自定义操作
+           },
+         },
        };
      },
    };
@@ -51,7 +52,9 @@ npm install vue2-file-preview-directive
 
 ### 指令绑定值
 
-- `fileList`：文件对象数组，每个文件对象应包含文件类型和路径。
+- `fileListOptions`：一个对象，包含以下属性：
+  - `fileList`：文件对象数组，每个文件对象应包含文件类型和路径。
+  - `beforePreviewRequest`：可选，一个函数，用于在预览文件之前执行自定义操作。可以是同步或异步。
 
 ### 文件对象结构
 
