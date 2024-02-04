@@ -153,10 +153,10 @@ const handleFileItemClick = async (
       hasList
         ? previewContainerStyles
         : {
-            flex: "1",
-            justifyContent: "center",
-            alignItems: "center",
-          } // 根据是否有列表调整样式
+          flex: "1",
+          justifyContent: "center",
+          alignItems: "center",
+        } // 根据是否有列表调整样式
     );
     previewContainer.id = previewContainerId;
     content.appendChild(previewContainer);
@@ -357,24 +357,24 @@ export default (event, options = {}, fileList) => {
   };
   closeButton.addEventListener("click", handleClose);
 
+
   // 判断文件列表长度并相应处理
   let dialogContentFileList = null;
   if (fileList.length > 1) {
     dialogContentFileList = createFileList(fileList, options, content);
     content.appendChild(dialogContentFileList); // 只有多个文件时添加文件列表
-    // 默认展示第一个文件
-    handleFileItemClick(fileList[0], content, options, true, handleClose);
   } else if (fileList.length === 1) {
     // 单个文件情况下的处理
     // 根据文件类型创建并展示对应的元素
-    handleFileItemClick(fileList[0], content, options, false, handleClose);
+    // handleFileItemClick(fileList[0], content, options, false, handleClose);
   }
-
   header.appendChild(title);
   header.appendChild(closeButton);
   dialog.appendChild(header);
   dialog.appendChild(content);
   document.body.appendChild(dialog);
+
+  handleFileItemClick(fileList[0], content, options, fileList.length > 1, handleClose);
 };
 
 export function getIframeSrc(fileInfo = {}, options) {
