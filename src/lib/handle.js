@@ -237,14 +237,17 @@ const handleFileItemClick = async (
   }
 
   // 处理 Office 文件的逻辑...
-  if (file.isOffice) {
+  if (file.isOffice && options.officeHandle) {
+    debugger
+    options.officeHandle(file);
+    return;
     // 关闭弹窗
-    closePreviewHandle();
-    POBrowser.openWindow(
-      "/pageOffice",
-      "width=1150px;height=900px;",
-      file.filePath
-    );
+    // closePreviewHandle();
+    // POBrowser.openWindow(
+    //   "/pageOffice",
+    //   "width=1150px;height=900px;",
+    //   file.filePath
+    // );
   }
 };
 
@@ -373,7 +376,7 @@ export default (event, options = {}, fileList) => {
   dialog.appendChild(header);
   dialog.appendChild(content);
   document.body.appendChild(dialog);
-
+  debugger
   handleFileItemClick(fileList[0], content, options, fileList.length > 1, handleClose);
 };
 

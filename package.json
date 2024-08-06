@@ -1,6 +1,6 @@
 {
   "name": "vue2-file-preview-directive",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "vue2，图片、音频、视频、pdf、word、excel、ppt等文件格式前端预览",
   "type": "module",
   "main": "dist/main.js",
